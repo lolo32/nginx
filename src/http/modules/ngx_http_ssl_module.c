@@ -464,7 +464,10 @@ ngx_http_ssl_npn_advertised(ngx_ssl_conn_t *ssl_conn,
         *outlen = sizeof(NGX_HTTP_V2_NPN_ADVERTISE NGX_HTTP_NPN_ADVERTISE) - 1;
 
         return SSL_TLSEXT_ERR_OK;
-    } else
+    }
+#endif
+#if (NGX_HTTP_V2 && NGX_HTTP_SPDY)
+       else
 #endif
 #if (NGX_HTTP_SPDY)
     if (hc->addr_conf->spdy) {
