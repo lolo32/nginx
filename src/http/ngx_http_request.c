@@ -312,6 +312,11 @@ ngx_http_init_connection(ngx_connection_t *c)
     rev->handler = ngx_http_wait_request_handler;
     c->write->handler = ngx_http_empty_handler;
 
+#if (NGX_HTTP_SPDY)
+    if (hc->addr_conf->spdy) {
+        rev->handler = ngx_http_spdy_init;
+    }
+#endif
 #if (NGX_HTTP_V2)
     if (hc->addr_conf->http2) {
         rev->handler = ngx_http_v2_init;
@@ -793,6 +798,34 @@ ngx_http_ssl_handshake_handler(ngx_connection_t *c)
                 ngx_http_v2_init(c->read);
                 return;
             }
+        }
+        }
+#endif
+
+#if (NGX_HTTP_SPDY                                                            \
+     && (defined TLSEXT_TYPE_application_layer_protocol_negotiation           \
+         || defined TLSEXT_TYPE_next_proto_neg))
+        {
+        unsigned int             len;
+        const unsigned char     *data;
+        static const ngx_str_t   spdy = ngx_string(NGX_SPDY_NPN_NEGOTIATED);
+
+#ifdef TLSEXT_TYPE_application_layer_protocol_negotiation
+        SSL_get0_alpn_selected(c->ssl->connection, &data, &len);
+
+#ifdef TLSEXT_TYPE_next_proto_neg
+        if (len == 0) {
+            SSL_get0_next_proto_negotiated(c->ssl->connection, &data, &len);
+        }
+#endif
+
+#else /* TLSEXT_TYPE_next_proto_neg */
+        SSL_get0_next_proto_negotiated(c->ssl->connection, &data, &len);
+#endif
+
+        if (len == spdy.len && ngx_strncmp(data, spdy.data, spdy.len) == 0) {
+            ngx_http_spdy_init(c->read);
+            return;
         }
         }
 #endif
@@ -2513,6 +2546,12 @@ ngx_http_finalize_connection(ngx_http_request_t *r)
         return;
     }
 #endif
+#if (NGX_HTTP_SPDY)
+    if (r->spdy_stream) {
+        ngx_http_close_request(r, 0);
+        return;
+    }
+#endif
 
     clcf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
 
@@ -2723,6 +2762,19 @@ ngx_http_test_reading(ngx_http_request_t *r)
 #if (NGX_HTTP_V2)
 
     if (r->stream) {
+        if (c->error) {
+            err = 0;
+            goto closed;
+        }
+
+        return;
+    }
+
+#endif
+
+#if (NGX_HTTP_SPDY)
+
+    if (r->spdy_stream) {
         if (c->error) {
             err = 0;
             goto closed;
@@ -3398,6 +3450,12 @@ ngx_http_close_request(ngx_http_request_t *r, ngx_int_t rc)
 #if (NGX_HTTP_V2)
     if (r->stream) {
         ngx_http_v2_close_stream(r->stream, rc);
+        return;
+    }
+#endif
+#if (NGX_HTTP_SPDY)
+    if (r->spdy_stream) {
+        ngx_http_spdy_close_stream(r->spdy_stream, rc);
         return;
     }
 #endif
