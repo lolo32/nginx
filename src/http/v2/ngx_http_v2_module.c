@@ -33,8 +33,6 @@ static char *ngx_http_v2_pool_size(ngx_conf_t *cf, void *post, void *data);
 static char *ngx_http_v2_streams_index_mask(ngx_conf_t *cf, void *post,
     void *data);
 static char *ngx_http_v2_chunk_size(ngx_conf_t *cf, void *post, void *data);
-static char *ngx_http_v2_spdy_deprecated(ngx_conf_t *cf, ngx_command_t *cmd,
-    void *conf);
 
 
 static ngx_conf_post_t  ngx_http_v2_recv_buffer_size_post =
@@ -111,62 +109,6 @@ static ngx_command_t  ngx_http_v2_commands[] = {
       NGX_HTTP_LOC_CONF_OFFSET,
       offsetof(ngx_http_v2_loc_conf_t, chunk_size),
       &ngx_http_v2_chunk_size_post },
-
-    { ngx_string("spdy_recv_buffer_size"),
-      NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
-      ngx_http_v2_spdy_deprecated,
-      NGX_HTTP_MAIN_CONF_OFFSET,
-      0,
-      NULL },
-
-    { ngx_string("spdy_pool_size"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
-      ngx_http_v2_spdy_deprecated,
-      NGX_HTTP_SRV_CONF_OFFSET,
-      0,
-      NULL },
-
-    { ngx_string("spdy_max_concurrent_streams"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
-      ngx_http_v2_spdy_deprecated,
-      NGX_HTTP_SRV_CONF_OFFSET,
-      0,
-      NULL },
-
-    { ngx_string("spdy_streams_index_size"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
-      ngx_http_v2_spdy_deprecated,
-      NGX_HTTP_SRV_CONF_OFFSET,
-      0,
-      NULL },
-
-    { ngx_string("spdy_recv_timeout"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
-      ngx_http_v2_spdy_deprecated,
-      NGX_HTTP_SRV_CONF_OFFSET,
-      0,
-      NULL },
-
-    { ngx_string("spdy_keepalive_timeout"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
-      ngx_http_v2_spdy_deprecated,
-      NGX_HTTP_SRV_CONF_OFFSET,
-      0,
-      NULL },
-
-    { ngx_string("spdy_headers_comp"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
-      ngx_http_v2_spdy_deprecated,
-      NGX_HTTP_SRV_CONF_OFFSET,
-      0,
-      NULL },
-
-    { ngx_string("spdy_chunk_size"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_http_v2_spdy_deprecated,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      0,
-      NULL },
 
       ngx_null_command
 };
@@ -453,17 +395,6 @@ ngx_http_v2_chunk_size(ngx_conf_t *cf, void *post, void *data)
     if (*sp > NGX_HTTP_V2_MAX_FRAME_SIZE) {
         *sp = NGX_HTTP_V2_MAX_FRAME_SIZE;
     }
-
-    return NGX_CONF_OK;
-}
-
-
-static char *
-ngx_http_v2_spdy_deprecated(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
-{
-    ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
-                       "invalid directive \"%V\": ngx_http_spdy_module "
-                       "was superseded by ngx_http_v2_module", &cmd->name);
 
     return NGX_CONF_OK;
 }
