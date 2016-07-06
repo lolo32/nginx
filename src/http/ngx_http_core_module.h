@@ -71,6 +71,9 @@ typedef struct {
 #if (NGX_HTTP_V2)
     unsigned                   http2:1;
 #endif
+#if (NGX_HTTP_SPDY)
+    unsigned                   spdy:1;
+#endif
 #if (NGX_HAVE_INET6 && defined IPV6_V6ONLY)
     unsigned                   ipv6only:1;
 #endif
@@ -239,6 +242,9 @@ struct ngx_http_addr_conf_s {
 #endif
 #if (NGX_HTTP_V2)
     unsigned                   http2:1;
+#endif
+#if (NGX_HTTP_SPDY)
+    unsigned                   spdy:1;
 #endif
     unsigned                   proxy_protocol:1;
 };
