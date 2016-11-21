@@ -8,6 +8,7 @@ is a version hosted, with the first commit in a branch a Vanilla version,
 and additionnals commits some patchs. You can see the patch list, in the
 order after the version number.
 
+    1.11.6  HTTP2/SPDY - Dynamic TLS sizing
     1.11.5  HTTP2/SPDY - Dynamic TLS sizing
     1.11.4  HTTP2/SPDY - Dynamic TLS sizing
     1.11.3  HTTP2/SPDY - Dynamic TLS sizing
