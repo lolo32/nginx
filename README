@@ -1,5 +1,11 @@
 Vanilla versions of Nginx, and after, commit with usefull patches
 
+You could download originals software from:
+  http://nginx.org/
+
+Patchs are from Cloudflare's GitHub repository at:
+  https://github.com/cloudflare/sslconfig/tree/master/patches
+
 Please switch to the branch, that describe the version you want to use
 
 
