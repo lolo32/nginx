@@ -236,9 +236,6 @@ struct ngx_http_addr_conf_s {
 #if (NGX_HTTP_SPDY)
     unsigned                   spdy:1;
 #endif
-#if (NGX_HTTP_SPDY)
-    unsigned                   spdy:1;
-#endif
     unsigned                   proxy_protocol:1;
 };
 
