@@ -376,13 +376,10 @@ index ade9abb..c76b177 100644
  #if (NGX_HAVE_INET6)
      unsigned                   ipv6only:1;
  #endif
-@@ -230,6 +233,12 @@ struct ngx_http_addr_conf_s {
+@@ -230,6 +233,6 @@ struct ngx_http_addr_conf_s {
  
      unsigned                   ssl:1;
      unsigned                   http2:1;
-+#if (NGX_HTTP_SPDY)
-+    unsigned                   spdy:1;
-+#endif
 +#if (NGX_HTTP_SPDY)
 +    unsigned                   spdy:1;
 +#endif
